@@ -1,0 +1,127 @@
+package tictactoe
+
+fun main() {
+    getFirstInput()
+    printField()
+    checkGame()
+    while (result == "Game not finished") {
+        nextStep()
+    }
+    println(result)
+}
+
+val inputList = mutableListOf(
+    mutableListOf<Char>('_', '_', '_'),
+    mutableListOf<Char>('_', '_', '_'),
+    mutableListOf<Char>('_', '_', '_')
+)
+var numOfX = 0
+var numOfO = 0
+var result = "Game not finished"
+
+fun getFirstInput() {
+    val input = readln()
+    var line = ""
+    for (i in input) {
+        when (i) {
+            'X' -> {
+                line += i
+                numOfX++
+            }
+            'O' -> {
+                line += i
+                numOfO++
+            }
+            else -> line += '_'
+        }
+    }
+    while (line.length < 9) line += '_'
+    inputList[0][0] = line[0]
+    inputList[0][1] = line[1]
+    inputList[0][2] = line[2]
+    inputList[1][0] = line[3]
+    inputList[1][1] = line[4]
+    inputList[1][2] = line[5]
+    inputList[2][0] = line[6]
+    inputList[2][1] = line[7]
+    inputList[2][2] = line[8]
+}
+
+fun nextStep() {
+
+    val input = readln().split(" ").toList()
+    var num1 = 0
+    var num2 = 0
+    try {
+        num1 = input[0].toInt()
+        num2 = input[1].toInt()
+    } catch (e: Exception) {
+        println("You should enter numbers!")
+        nextStep()
+        return
+    }
+
+    if (num1 !in 1..3 || num2 !in 1..3) {
+        val message = "Coordinates should be from 1 to 3!"
+        println(message)
+        nextStep()
+        return
+    }
+    if (inputList[num1 - 1][num2 - 1] == '_' && numOfX - numOfO <= 0) {
+        inputList[num1 - 1][num2 - 1] = 'X'
+        numOfX++
+        printField()
+        checkGame()
+        return
+    } else if (inputList[num1 - 1][num2 - 1] == '_' && numOfX - numOfO > 0) {
+        inputList[num1 - 1][num2 - 1] = 'O'
+        numOfO++
+        printField()
+        checkGame()
+        return
+    } else {
+        println("This cell is occupied! Choose another one!")
+        nextStep()
+        return
+    }
+
+}
+
+fun printField() {
+    print(
+        """
+        ---------
+        | ${inputList[0][0]} ${inputList[0][1]} ${inputList[0][2]} |
+        | ${inputList[1][0]} ${inputList[1][1]} ${inputList[1][2]} |
+        | ${inputList[2][0]} ${inputList[2][1]} ${inputList[2][2]} |
+        ---------
+    """.trimIndent()
+    )
+    println()
+}
+
+fun checkGame() {
+    val var1 = inputList[0].joinToString("")
+    val var2 = inputList[1].joinToString("")
+    val var3 = inputList[2].joinToString("")
+    val var4 = "" + inputList[0][0] + inputList[1][1] + inputList[2][2]
+    val var5 = "" + inputList[2][0] + inputList[1][1] + inputList[0][2]
+    val var6 = "" + inputList[0][0] + inputList[1][0] + inputList[2][0]
+    val var7 = "" + inputList[0][1] + inputList[1][1] + inputList[2][1]
+    val var8 = "" + inputList[0][2] + inputList[1][2] + inputList[2][2]
+
+    val isXXX = var1 == "XXX" || var2 == "XXX" || var3 == "XXX" || var4 == "XXX" || var5 == "XXX" || var6 == "XXX" || var7 == "XXX" || var8 == "XXX"
+    val isOOO = var1 == "OOO" || var2 == "OOO" || var3 == "OOO" || var4 == "OOO" || var5 == "OOO" || var6 == "OOO" || var7 == "OOO" || var8 == "OOO"
+
+    result = if (numOfX - numOfO > 1 || numOfO - numOfX > 1) {
+        "Impossible"
+    } else if (isXXX) {
+        if (isOOO) "Impossible" else "X wins"
+    } else if (isOOO) {
+        if (isXXX) "Impossible" else "O wins"
+    } else if (numOfX == 5 && numOfO == 4) {
+        "Draw"
+    } else {
+        "Game not finished"
+    }
+}
